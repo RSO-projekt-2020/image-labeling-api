@@ -21,9 +21,7 @@ CORS(app, resources={r"/v1/*": {"origins": "*"}})
 # DB settings
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DB_URI']
-app.config['USERS_API_URI'] = 'http://users-api:8080/v1' # environ['USERS_API_URI'] 
-app.config['ES_CLOUD_ID'] = os.environ['ES_CLOUD_ID'].strip()
-app.config['ES_PASSWD'] = os.environ['ES_PASSWD'].strip()
+app.config['USERS_API_URI'] = 'http://users-api:8080/v1' # environ['USERS_API_URI']
 
 db = SQLAlchemy(app)
 es = Elasticsearch(cloud_id=app.config['ES_CLOUD_ID'], http_auth=('elastic', app.config['ES_PASSWD']))
