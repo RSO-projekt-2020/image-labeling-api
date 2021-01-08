@@ -31,6 +31,11 @@ spec:
                 secretKeyRef:
                   name: log-connection
                   key: log-connection-port
+            - name: THIRD_PARTY_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: third-party-api-key
+                  key: third-party-api-key
           ports:
             - containerPort: 8080
               name: server
