@@ -113,7 +113,8 @@ def image_labeling(video_id):
         'x-rapidapi-host': "image-labeling1.p.rapidapi.com"
     }
     response = requests.request("POST", video_path, data=payload, headers=headers)
-    print(response.text)
+    return make_response({'msg': 'ok', 'content': response.text})
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
