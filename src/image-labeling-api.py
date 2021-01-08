@@ -23,8 +23,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DB_URI']
 app.config['USERS_API_URI'] = 'http://users-api:8080/v1' # environ['USERS_API_URI']
 
+app.config['THIRD_PARTY_API_KEY'] = os.environ['THIRD_PARTY_API_KEY'].strip()
+
 db = SQLAlchemy(app)
-es = Elasticsearch(cloud_id=app.config['ES_CLOUD_ID'], http_auth=('elastic', app.config['ES_PASSWD']))
 
 # getting media directory ready
 app.config['MEDIA_DIR'] = './media/'
@@ -105,10 +106,10 @@ def image_labeling(video_id):
         request_id = request.headers.get('X-Request-ID')
     video_path = Video.query.filter_by(video_id=video_id).first().path
 
-    payload = "{\n    \"url\": \"https://www.inferdo.com/img/label-1.jpg\"\n}"
+    payload = '{"url" : "https://www.inferdo.com/img/label-1.jpg"}'
     headers = {
         'content-type': "application/json",
-        'x-rapidapi-key': "f6c69cec91msha413c5b0abb8a20p13497ejsnade379e02f39",
+        'x-rapidapi-key': app.config['THIRD_PARTY_API_KEY'],
         'x-rapidapi-host': "image-labeling1.p.rapidapi.com"
     }
     response = requests.request("POST", video_path, data=payload, headers=headers)
