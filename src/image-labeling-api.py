@@ -71,6 +71,10 @@ class Video(db.Model):
     height = db.Column(db.String)
     created_on = db.Column(db.String)
     path = db.Column(db.String)
+    label_1 = db.Column(db.String)
+    label_2 = db.Column(db.String)
+    label_3 = db.Column(db.String)
+
 
     def __init__(self, user_id, title, description, w, h, path):
         self.user_id = user_id
@@ -89,9 +93,18 @@ class Video(db.Model):
                'height': self.height,
                'created_on': self.created_on,
                'path': self.path,
-               'video_id': self.video_id}
+               'video_id': self.video_id,
+               'label_1': self.label_1,
+               'label_2': self.label_2,
+               'label_3': self.label_3}
         return tmp
 
+
+def create_label_list(labels):
+    out = ["", "", ""]
+    for i in range(len(labels[:3])):
+        out[i] = labels[i]
+    return out
 
 # views
 @app.route(route + '/image-labeling/<int:video_id>', methods=['GET'])
@@ -108,16 +121,25 @@ def image_labeling(video_id):
 
     url = "https://image-labeling1.p.rapidapi.com/img/label"
 
-    payload = '\{"url" : {}\}'.format(video_path)
+    payload = '{"url" : "' + video_path + '"}'
+
     headers = {
         'content-type': "application/json",
         'x-rapidapi-key': app.config['THIRD_PARTY_API_KEY'],
         'x-rapidapi-host': "image-labeling1.p.rapidapi.com"
     }
     response = requests.request("POST", url, data=payload, headers=headers)
-    # TODO: extract first three labels
-
-
+    print(response.text)
+    #
+    # labels = create_label_list(labels)
+    #
+    # video = Video.query.filter_by(video_id=video_id).first()
+    # video.label_1 = labels[0]
+    # video.label_2 = labels[1]
+    # video.label_3 = labels[2]
+    #
+    # db.session.add(video)
+    # db.session.commit()
 
     return make_response({'msg': 'ok', 'content': response.text})
 
