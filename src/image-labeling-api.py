@@ -100,10 +100,12 @@ class Video(db.Model):
         return tmp
 
 
-def create_label_list(labels):
+def create_label_list(response):
+    top_three = [i for i in json.loads(response).keys()][:3]
+
     out = ["", "", ""]
-    for i in range(len(labels[:3])):
-        out[i] = labels[i]
+    for i in range(len(top_three)):
+        out[i] = top_three[i]
     return out
 
 # views
@@ -129,19 +131,20 @@ def image_labeling(video_id):
         'x-rapidapi-host': "image-labeling1.p.rapidapi.com"
     }
     response = requests.request("POST", url, data=payload, headers=headers)
-    print(response.text)
-    #
-    # labels = create_label_list(labels)
-    #
-    # video = Video.query.filter_by(video_id=video_id).first()
-    # video.label_1 = labels[0]
-    # video.label_2 = labels[1]
-    # video.label_3 = labels[2]
-    #
-    # db.session.add(video)
-    # db.session.commit()
 
-    return make_response({'msg': 'ok', 'content': response.text})
+    labels = create_label_list(response.text)
+
+    video = Video.query.filter_by(video_id=video_id).first()
+    video.label_1 = labels[0]
+    video.label_2 = labels[1]
+    video.label_3 = labels[2]
+
+    db.session.add(video)
+    db.session.commit()
+
+    logger.info("[image-labeling-api][{}] Got the labels from 3rd party API".format(request_id))
+
+    return make_response({'msg': 'ok'})
 
 
 if __name__ == '__main__':
