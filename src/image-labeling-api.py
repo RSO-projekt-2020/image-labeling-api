@@ -106,13 +106,19 @@ def image_labeling(video_id):
         request_id = request.headers.get('X-Request-ID')
     video_path = Video.query.filter_by(video_id=video_id).first().path
 
-    payload = '{"url" : "https://www.inferdo.com/img/label-1.jpg"}'
+    url = "https://image-labeling1.p.rapidapi.com/img/label"
+
+    payload = '\{"url" : {}\}'.format(video_path)
     headers = {
         'content-type': "application/json",
         'x-rapidapi-key': app.config['THIRD_PARTY_API_KEY'],
         'x-rapidapi-host': "image-labeling1.p.rapidapi.com"
     }
-    response = requests.request("POST", video_path, data=payload, headers=headers)
+    response = requests.request("POST", url, data=payload, headers=headers)
+    # TODO: extract first three labels
+
+
+
     return make_response({'msg': 'ok', 'content': response.text})
 
 
